@@ -29,11 +29,12 @@ interface TimeBlock {
 }
 
 interface ScheduleBlock {
-  start: Date;
-  end: Date;
+  task?: string;
+  startTime: Date;
+  endTime: Date;
   title: string;
   isBreak: boolean;
-  taskId?: string;
+  breakType: string | null;
 }
 
 interface ScheduleResult {
@@ -192,11 +193,12 @@ export class Scheduler {
     return blocks
       .filter(block => block.task || block.isBreak)
       .map(block => ({
-        start: block.start,
-        end: block.end,
+        task: block.task?._id,
+        startTime: block.start,
+        endTime: block.end,
         title: block.task?.title || (block.breakType === "lunch" ? "Lunch Break" : "Break"),
         isBreak: block.isBreak || false,
-        taskId: block.task?._id
+        breakType: block.isBreak ? (block.breakType || "short") : null,
       }));
   }
 }
