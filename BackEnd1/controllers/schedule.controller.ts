@@ -12,6 +12,10 @@ export const generateSchedule = asyncHandler(async (req: AuthRequest, res: Respo
   const scheduleDate = date ? new Date(date) : new Date();
   scheduleDate.setHours(0, 0, 0, 0);
   const user = await User.findById(req.user!.id);
+  await Task.updateMany(
+    { user: req.user!.id, status: "scheduled" },
+    { status: "pending", $unset: { scheduledStart: "", scheduledEnd: "" } },
+  );
   const tasks = await Task.find({
     user: req.user!.id,
     status: { $in: ["pending", "scheduled"] },
