@@ -26,6 +26,7 @@ interface TimeBlock {
   task: { _id: string; title: string; duration: number } | null;
   isBreak: boolean;
   breakType: string | null;
+  isWorkHour: boolean;
 }
 
 interface ScheduleBlock {
@@ -129,11 +130,17 @@ export class Scheduler {
 
   private generateTimeBlocks(date: Date): TimeBlock[] {
     const blocks: TimeBlock[] = [];
+    const dayStart = 6;
+    const dayEnd = 22;
     const startDate = new Date(date);
-    startDate.setHours(this.workStart, 0, 0, 0);
+    startDate.setHours(dayStart, 0, 0, 0);
     const endDate = new Date(date);
-    endDate.setHours(this.workEnd, 0, 0, 0);
+    endDate.setHours(dayEnd, 0, 0, 0);
     const currentTime = new Date(startDate);
+    const workStartDate = new Date(date);
+    workStartDate.setHours(this.workStart, 0, 0, 0);
+    const workEndDate = new Date(date);
+    workEndDate.setHours(this.workEnd, 0, 0, 0);
     const lunchStart = new Date(date);
     lunchStart.setHours(this.lunchBreak.start, 0, 0, 0);
     const lunchEnd = new Date(lunchStart.getTime() + this.lunchBreak.duration * 60000);
@@ -141,14 +148,16 @@ export class Scheduler {
     while (currentTime < endDate) {
       const blockEnd = new Date(currentTime);
       blockEnd.setMinutes(currentTime.getMinutes() + 60);
-      const isLunch = currentTime >= lunchStart && currentTime < lunchEnd;
+      const isWorkHour = currentTime >= workStartDate && currentTime < workEndDate;
+      const isLunch = isWorkHour && currentTime >= lunchStart && currentTime < lunchEnd;
       blocks.push({
         start: new Date(currentTime),
         end: blockEnd,
-        available: !isLunch,
+        available: isWorkHour && !isLunch,
         task: null,
         isBreak: isLunch,
-        breakType: isLunch ? "lunch" : null
+        breakType: isLunch ? "lunch" : null,
+        isWorkHour,
       });
       currentTime.setTime(blockEnd.getTime());
     }
@@ -158,7 +167,7 @@ export class Scheduler {
   private findTimeSlot(blocks: TimeBlock[], task: TaskData): TimeBlock | undefined {
     if (task.preferredTimeOfDay !== "any") {
       const preferredBlocks = blocks.filter(block => {
-        if (!block.available) return false;
+        if (!block.available && task.preferredTimeOfDay !== "evening") return false;
         const hour = block.start.getHours();
         switch (task.preferredTimeOfDay) {
           case "morning": return hour >= 6 && hour < 12;
