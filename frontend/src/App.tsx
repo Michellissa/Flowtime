@@ -47,7 +47,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppLayout({ children }: { children: React.ReactNode }) {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -65,6 +65,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
               {theme === 'light' ? '🌙' : '☀️'}
             </button>
+            {user && <span className="nav-link user-name">{user.name}</span>}
             <span className="nav-link" style={{ cursor: 'pointer' }} onClick={logout}>
               Logout
             </span>
