@@ -13,6 +13,7 @@ React-based UI for the Flowtime task management app with intelligent scheduling.
 
 - **Framework:** React 19
 - **Language:** TypeScript
+- **Bundler:** Vite 5
 - **Routing:** React Router v7
 - **HTTP:** Axios
 - **Styling:** CSS with theme-aware custom properties
@@ -21,10 +22,7 @@ React-based UI for the Flowtime task management app with intelligent scheduling.
 
 ```bash
 # Start development server (port 3001)
-npm start
-
-# Run tests
-npm test
+npm run dev
 
 # Build for production
 npm run build
@@ -35,29 +33,33 @@ The development server proxies `/api` requests to `http://localhost:3000` (the b
 ## Project Structure
 
 ```
-frontend/src/
-├── components/         # Reusable UI components
-│   ├── Modal.tsx
-│   ├── TaskCard.tsx
-│   └── TaskForm.tsx
-├── context/            # React context providers
-│   ├── AuthContext.tsx
-│   ├── ThemeContext.tsx
-│   └── ToastContext.tsx
-├── pages/              # Route pages
-│   ├── LoginPage.tsx
-│   ├── RegisterPage.tsx
-│   ├── TasksPage.tsx
-│   └── SchedulePage.tsx
-├── services/           # API service layer
-│   └── api.ts
-├── styles/             # Global CSS
-│   ├── components.css
-│   ├── modal.css
-│   ├── tasks.css
-│   └── theme.css
-├── types/              # TypeScript type declarations
-│   └── css.d.ts
-├── App.tsx             # Main app with routing and layout
-└── index.tsx           # Entry point
+frontend/
+├── vite.config.ts          # Vite config with API proxy
+├── tsconfig.node.json      # Node TypeScript config for Vite
+├── src/
+│   ├── components/         # Reusable UI components
+│   │   ├── Modal.tsx
+│   │   ├── TaskCard.tsx
+│   │   └── TaskForm.tsx
+│   ├── context/            # React context providers
+│   │   ├── AuthContext.tsx
+│   │   ├── ThemeContext.tsx
+│   │   └── ToastContext.tsx
+│   ├── pages/              # Route pages
+│   │   ├── LoginPage.tsx
+│   │   ├── RegisterPage.tsx
+│   │   ├── TasksPage.tsx
+│   │   └── SchedulePage.tsx
+│   ├── services/           # API service layer
+│   │   └── api.ts
+│   ├── styles/             # Global CSS
+│   │   ├── components.css
+│   │   ├── modal.css
+│   │   ├── tasks.css
+│   │   └── theme.css
+│   ├── types/              # TypeScript type declarations
+│   │   ├── css.d.ts
+│   │   └── vite-env.d.ts
+│   ├── App.tsx             # Main app with routing and layout
+│   └── main.tsx            # Entry point (Vite)
 ```
