@@ -22,10 +22,14 @@ A task management API with intelligent scheduling for optimized productivity.
 
 ```
 BackEnd1/
-├── controllers/        # Route handlers
+├── controllers/        # Thin request/response handlers
 │   ├── auth.controller.ts
 │   ├── task.controller.ts
 │   └── schedule.controller.ts
+├── services/           # Business logic layer
+│   ├── auth.service.ts
+│   ├── task.service.ts
+│   └── schedule.service.ts
 ├── middleware/          # Express middleware
 │   ├── auth.middleware.ts
 │   ├── error.middleware.ts

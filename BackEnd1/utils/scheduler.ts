@@ -38,7 +38,7 @@ interface ScheduleBlock {
   breakType: string | null;
 }
 
-interface ScheduleResult {
+export interface ScheduleResult {
   date: Date;
   scheduledTasks: TaskData[];
   unscheduledTasks: TaskData[];
