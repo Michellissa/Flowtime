@@ -1,5 +1,6 @@
 import { Response } from "express";
 import Task from "../models/Task.model";
+import Schedule from "../models/Schedule.model";
 import asyncHandler from "../utils/asyncHandler";
 import { AppError } from "../utils/AppError";
 import { AuthRequest } from "../types/express";
@@ -74,6 +75,10 @@ export const deleteTask = asyncHandler(async (req: AuthRequest, res: Response) =
   if (!task) {
     throw new AppError("Task not found", 404);
   }
+  await Schedule.updateMany(
+    { user: req.user!.id },
+    { $pull: { blocks: { task: req.params.id } } },
+  );
   res.status(200).json({
     success: true,
     message: "Task deleted successfully",
