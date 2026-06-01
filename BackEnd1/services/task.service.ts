@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Task from "../models/Task.model";
 import Schedule from "../models/Schedule.model";
 import { AppError } from "../utils/AppError";
@@ -58,7 +59,7 @@ export const deleteTask = async (userId: string, taskId: string) => {
 
 export const fetchTaskStats = async (userId: string) => {
   const stats = await Task.aggregate([
-    { $match: { user: userId } },
+    { $match: { user: new mongoose.Types.ObjectId(userId) } },
     {
       $group: {
         _id: "$status",
