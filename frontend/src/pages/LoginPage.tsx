@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
+import { DEMO_MODE, DEMO_CREDENTIALS } from '../services/api';
 import '../styles/modal.css';
 
 export default function LoginPage() {
@@ -12,6 +13,11 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { addToast } = useToast();
+
+  const fillDemo = () => {
+    setEmail(DEMO_CREDENTIALS.email);
+    setPassword(DEMO_CREDENTIALS.password);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +46,20 @@ export default function LoginPage() {
         </div>
 
         {error && <div className="error-alert">{error}</div>}
+
+        {DEMO_MODE && (
+          <div className="demo-banner">
+            <p>
+              <strong>Demo mode</strong> — no backend connected. Use the demo account to explore:
+            </p>
+            <p className="demo-credentials">
+              {DEMO_CREDENTIALS.email} / {DEMO_CREDENTIALS.password}
+            </p>
+            <button type="button" className="btn btn-secondary" onClick={fillDemo} style={{ width: '100%' }}>
+              Fill demo credentials
+            </button>
+          </div>
+        )}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="input-group">

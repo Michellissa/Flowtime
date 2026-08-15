@@ -1,36 +1,43 @@
 import axios from 'axios';
+import { createDemoApi, DEMO_CREDENTIALS } from './demoApi';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+export const DEMO_MODE = !import.meta.env.VITE_API_URL;
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+const api = DEMO_MODE
+  ? createDemoApi()
+  : axios.create({
+      baseURL: API_URL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+if (!DEMO_MODE) {
+  (api as ReturnType<typeof axios.create>).interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
+  (api as ReturnType<typeof axios.create>).interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
+  );
+}
 
 export const authService = {
   register: (data: { name: string; email: string; password: string }) => api.post('/auth/register', data),
@@ -53,4 +60,5 @@ export const scheduleService = {
   generate: (data: { date: string }) => api.post('/schedule/generate', data),
 };
 
+export { DEMO_CREDENTIALS };
 export default api;
